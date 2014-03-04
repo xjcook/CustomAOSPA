@@ -1,10 +1,12 @@
 package net.xjcook.xposed.customaospa;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.view.Menu;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Bundle;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends Activity 
+							  implements OnSharedPreferenceChangeListener {
 	
     public static final int ED_DISABLED = 0;
     public static final int ED_HIDE_NAVBAR = 1;
@@ -36,10 +38,11 @@ public class SettingsActivity extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.custom_aospasettings, menu);
-		return true;
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		if (key.equals(PREF_KEY_EXPANDED_DESKTOP)) {
+			
+		}
 	}
 
 }

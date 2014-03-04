@@ -3,6 +3,6 @@
 
     <string name="app_name">CustomAOSPA</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="pref_expanded_desktop">Hide navigation bar</string>
 
 </resources>
