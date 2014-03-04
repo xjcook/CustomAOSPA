@@ -129,8 +129,6 @@ public class ModExpandedDesktop {
                         GravityBoxSettings.EXTRA_ED_MODE, GravityBoxSettings.ED_DISABLED);
                 mExpandedDesktopMode = expandedDesktopMode;
                 updateSettings();
-            } else if (intent.getAction().equals(ModStatusbarColor.ACTION_PHONE_STATUSBAR_VIEW_MADE)) {
-                updateSettings();
             } else if (intent.getAction().equals(GravityBoxSettings.ACTION_PREF_NAVBAR_CHANGED)) {
                 if (intent.hasExtra(GravityBoxSettings.EXTRA_NAVBAR_HEIGHT)) {
                     mNavbarHeightScaleFactor = 
@@ -251,7 +249,6 @@ public class ModExpandedDesktop {
 
                         IntentFilter intentFilter = new IntentFilter();
                         intentFilter.addAction(GravityBoxSettings.ACTION_PREF_EXPANDED_DESKTOP_MODE_CHANGED);
-                        intentFilter.addAction(ModStatusbarColor.ACTION_PHONE_STATUSBAR_VIEW_MADE);
                         if (mNavbarOverride) {
                             intentFilter.addAction(GravityBoxSettings.ACTION_PREF_NAVBAR_CHANGED);
                         }
