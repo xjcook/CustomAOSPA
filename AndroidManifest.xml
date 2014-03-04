@@ -17,7 +17,7 @@
         <meta-data android:value="2.4*" android:name="xposedminversion"/>
         <meta-data android:value="Custom Paranoid Android 4 settings" android:name="xposeddescription"/>
         <activity
-            android:name="net.xjcook.xposed.customaospa.CustomAOSPASettings"
+            android:name="net.xjcook.xposed.customaospa.SettingsActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

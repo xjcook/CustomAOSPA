@@ -123,24 +123,24 @@ public class ModExpandedDesktop {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (DEBUG) log("Broadcast received: " + intent.toString());
-            if (intent.getAction().equals(GravityBoxSettings.ACTION_PREF_EXPANDED_DESKTOP_MODE_CHANGED)
-                    && intent.hasExtra(GravityBoxSettings.EXTRA_ED_MODE)) {
+            if (intent.getAction().equals(SettingsActivity.ACTION_PREF_EXPANDED_DESKTOP_MODE_CHANGED)
+                    && intent.hasExtra(SettingsActivity.EXTRA_ED_MODE)) {
                 final int expandedDesktopMode = intent.getIntExtra(
-                        GravityBoxSettings.EXTRA_ED_MODE, GravityBoxSettings.ED_DISABLED);
+                        SettingsActivity.EXTRA_ED_MODE, SettingsActivity.ED_DISABLED);
                 mExpandedDesktopMode = expandedDesktopMode;
                 updateSettings();
-            } else if (intent.getAction().equals(GravityBoxSettings.ACTION_PREF_NAVBAR_CHANGED)) {
-                if (intent.hasExtra(GravityBoxSettings.EXTRA_NAVBAR_HEIGHT)) {
+            } else if (intent.getAction().equals(SettingsActivity.ACTION_PREF_NAVBAR_CHANGED)) {
+                if (intent.hasExtra(SettingsActivity.EXTRA_NAVBAR_HEIGHT)) {
                     mNavbarHeightScaleFactor = 
-                            (float)intent.getIntExtra(GravityBoxSettings.EXTRA_NAVBAR_HEIGHT, 100) / 100f;
+                            (float)intent.getIntExtra(SettingsActivity.EXTRA_NAVBAR_HEIGHT, 100) / 100f;
                 }
-                if (intent.hasExtra(GravityBoxSettings.EXTRA_NAVBAR_HEIGHT_LANDSCAPE)) {
+                if (intent.hasExtra(SettingsActivity.EXTRA_NAVBAR_HEIGHT_LANDSCAPE)) {
                     mNavbarHeightLandscapeScaleFactor = (float)intent.getIntExtra(
-                                    GravityBoxSettings.EXTRA_NAVBAR_HEIGHT_LANDSCAPE,  100) / 100f;
+                                    SettingsActivity.EXTRA_NAVBAR_HEIGHT_LANDSCAPE,  100) / 100f;
                 }
-                if (intent.hasExtra(GravityBoxSettings.EXTRA_NAVBAR_WIDTH)) {
+                if (intent.hasExtra(SettingsActivity.EXTRA_NAVBAR_WIDTH)) {
                     mNavbarWidthScaleFactor = 
-                            (float)intent.getIntExtra(GravityBoxSettings.EXTRA_NAVBAR_WIDTH, 100) / 100f;
+                            (float)intent.getIntExtra(SettingsActivity.EXTRA_NAVBAR_WIDTH, 100) / 100f;
                 }
                 updateSettings();
             }
@@ -153,7 +153,7 @@ public class ModExpandedDesktop {
         try {
             final boolean expandedDesktop = Settings.Global.getInt(mContext.getContentResolver(), 
                     SETTING_EXPANDED_DESKTOP_STATE, 0) == 1;
-            if (mExpandedDesktopMode == GravityBoxSettings.ED_DISABLED && expandedDesktop) {
+            if (mExpandedDesktopMode == SettingsActivity.ED_DISABLED && expandedDesktop) {
                     Settings.Global.putInt(mContext.getContentResolver(),
                             SETTING_EXPANDED_DESKTOP_STATE, 0);
                     return;
@@ -221,20 +221,20 @@ public class ModExpandedDesktop {
             final Class<?> classPhoneWindowManager = XposedHelpers.findClass(CLASS_PHONE_WINDOW_MANAGER, null);
             final Class<?> classImmersiveModeConfirm = XposedHelpers.findClass(CLASS_IMMERSIVE_MODE_CONFIRM, null);
 
-            mNavbarOverride = prefs.getBoolean(GravityBoxSettings.PREF_KEY_NAVBAR_OVERRIDE, false);
+            mNavbarOverride = prefs.getBoolean(SettingsActivity.PREF_KEY_NAVBAR_OVERRIDE, false);
             if (mNavbarOverride) {
                 mNavbarHeightScaleFactor = 
-                        (float) prefs.getInt(GravityBoxSettings.PREF_KEY_NAVBAR_HEIGHT, 100) / 100f;
+                        (float) prefs.getInt(SettingsActivity.PREF_KEY_NAVBAR_HEIGHT, 100) / 100f;
                 mNavbarHeightLandscapeScaleFactor = 
-                        (float) prefs.getInt(GravityBoxSettings.PREF_KEY_NAVBAR_HEIGHT_LANDSCAPE, 100) / 100f;
+                        (float) prefs.getInt(SettingsActivity.PREF_KEY_NAVBAR_HEIGHT_LANDSCAPE, 100) / 100f;
                 mNavbarWidthScaleFactor = 
-                        (float) prefs.getInt(GravityBoxSettings.PREF_KEY_NAVBAR_WIDTH, 100) / 100f;
+                        (float) prefs.getInt(SettingsActivity.PREF_KEY_NAVBAR_WIDTH, 100) / 100f;
             }
 
-            mExpandedDesktopMode = GravityBoxSettings.ED_DISABLED;
+            mExpandedDesktopMode = SettingsActivity.ED_DISABLED;
             try {
                 mExpandedDesktopMode = Integer.valueOf(prefs.getString(
-                        GravityBoxSettings.PREF_KEY_EXPANDED_DESKTOP, "0"));
+                        SettingsActivity.PREF_KEY_EXPANDED_DESKTOP, "0"));
             } catch (NumberFormatException nfe) {
                 log("Invalid value for PREF_KEY_EXPANDED_DESKTOP preference");
             }
@@ -248,9 +248,9 @@ public class ModExpandedDesktop {
                         mPhoneWindowManager = param.thisObject;
 
                         IntentFilter intentFilter = new IntentFilter();
-                        intentFilter.addAction(GravityBoxSettings.ACTION_PREF_EXPANDED_DESKTOP_MODE_CHANGED);
+                        intentFilter.addAction(SettingsActivity.ACTION_PREF_EXPANDED_DESKTOP_MODE_CHANGED);
                         if (mNavbarOverride) {
-                            intentFilter.addAction(GravityBoxSettings.ACTION_PREF_NAVBAR_CHANGED);
+                            intentFilter.addAction(SettingsActivity.ACTION_PREF_NAVBAR_CHANGED);
                         }
                         mContext.registerReceiver(mBroadcastReceiver, intentFilter);
 
@@ -424,7 +424,7 @@ public class ModExpandedDesktop {
                             boolean immersiveSticky = (sysui & ViewConst.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) != 0;
                             boolean navAllowedHidden = immersive || immersiveSticky;
                             navTranslucent &= !immersiveSticky || 
-                                    mExpandedDesktopMode == GravityBoxSettings.ED_IMMERSIVE_STATUSBAR;  // transient trumps translucent
+                                    mExpandedDesktopMode == SettingsActivity.ED_IMMERSIVE_STATUSBAR;  // transient trumps translucent
                             navTranslucent &= (Boolean) XposedHelpers.callMethod(param.thisObject, "areTranslucentBarsAllowed");
 
                             // When the navigation bar isn't visible, we put up a fake
@@ -841,22 +841,22 @@ public class ModExpandedDesktop {
 
     private static boolean isStatusbarImmersive() {
         return (mExpandedDesktop
-                && (mExpandedDesktopMode == GravityBoxSettings.ED_SEMI_IMMERSIVE ||
-                    mExpandedDesktopMode == GravityBoxSettings.ED_IMMERSIVE_STATUSBAR ||
-                    mExpandedDesktopMode == GravityBoxSettings.ED_IMMERSIVE));
+                && (mExpandedDesktopMode == SettingsActivity.ED_SEMI_IMMERSIVE ||
+                    mExpandedDesktopMode == SettingsActivity.ED_IMMERSIVE_STATUSBAR ||
+                    mExpandedDesktopMode == SettingsActivity.ED_IMMERSIVE));
     }
 
     private static boolean isNavbarImmersive() {
         return (mExpandedDesktop
-                && (mExpandedDesktopMode == GravityBoxSettings.ED_IMMERSIVE ||
-                mExpandedDesktopMode == GravityBoxSettings.ED_SEMI_IMMERSIVE ||
-                mExpandedDesktopMode == GravityBoxSettings.ED_IMMERSIVE_NAVBAR));
+                && (mExpandedDesktopMode == SettingsActivity.ED_IMMERSIVE ||
+                mExpandedDesktopMode == SettingsActivity.ED_SEMI_IMMERSIVE ||
+                mExpandedDesktopMode == SettingsActivity.ED_IMMERSIVE_NAVBAR));
     }
 
     private static boolean isNavbarHidden() {
         return (mExpandedDesktop && 
-                    (mExpandedDesktopMode == GravityBoxSettings.ED_HIDE_NAVBAR ||
-                            mExpandedDesktopMode == GravityBoxSettings.ED_SEMI_IMMERSIVE));
+                    (mExpandedDesktopMode == SettingsActivity.ED_HIDE_NAVBAR ||
+                            mExpandedDesktopMode == SettingsActivity.ED_SEMI_IMMERSIVE));
     }
 
     private static boolean isImmersiveModeActive() {
@@ -874,7 +874,7 @@ public class ModExpandedDesktop {
     }
 
     private static int updateWindowManagerVisibilityFlagsForExpandedDesktop(int vis) {
-        if (mExpandedDesktopMode != GravityBoxSettings.ED_DISABLED) {
+        if (mExpandedDesktopMode != SettingsActivity.ED_DISABLED) {
             vis |= WmLp.FLAG_FULLSCREEN;
         }
         return vis;
